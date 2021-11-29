@@ -10,7 +10,7 @@ import { useGlobalState } from "context/globalState";
 function Home() {
   const [value, setValue] = useGlobalState();
 
-  const { status, data, isFetching } = useQuery("data", fetchData);
+  const { status, data } = useQuery("data", fetchData);
 
   useEffect(() => {
     if (data) {
@@ -32,7 +32,7 @@ function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
-  if (status === "loading" || isFetching) {
+  if (status === "loading" || !value) {
     return <Spinner />;
   }
 
@@ -41,9 +41,11 @@ function Home() {
   }
 
   return (
-    <div>
-      <ProductList products={data.products} />
-    </div>
+    value && (
+      <main style={{ minHeight: "100vh", backgroundColor: "#fef6dc" }}>
+        <ProductList products={data.products} />
+      </main>
+    )
   );
 }
 

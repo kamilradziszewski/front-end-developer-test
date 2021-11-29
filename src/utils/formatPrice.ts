@@ -1,7 +1,11 @@
 export const formatPrice = (price: number, currency: string): string => {
-  return new Intl.NumberFormat().format(price) + "rst";
-  // return new Intl.NumberFormat("en-GB", {
-  //   currency: "GBP",
-  //   style: "decimal",
-  // }).format(price);
+  const formatConfig = {
+    style: "currency",
+    currency: currency,
+    minimumFractionDigits: 2,
+    currencyDisplay: "symbol",
+  };
+  const britishNumberFormatter = new Intl.NumberFormat("en-GB", formatConfig);
+
+  return britishNumberFormatter.format(price);
 };

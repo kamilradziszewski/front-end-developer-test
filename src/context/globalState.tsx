@@ -1,16 +1,5 @@
 import React, { createContext, useContext } from "react";
 
-export type productType = {
-  name: string;
-  price: number;
-  nutrients: [
-    {
-      id: string;
-      amount: number;
-    }
-  ];
-};
-
 export const GlobalStateContext = createContext<any>(undefined);
 
 export const GlobalStateProvider = (props: any) => {
