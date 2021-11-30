@@ -3,12 +3,10 @@ import React, { createContext, useContext } from "react";
 export const GlobalStateContext = createContext<any>(undefined);
 
 export const GlobalStateProvider = (props: any) => {
-  const [value, setValue] = React.useState<any>({
-    basket: [],
-  });
+  const [state, setState] = React.useState<any>({});
 
   return (
-    <GlobalStateContext.Provider value={[value, setValue]}>
+    <GlobalStateContext.Provider value={[state, setState]}>
       {props.children}
     </GlobalStateContext.Provider>
   );
