@@ -5,7 +5,6 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { ChakraProvider } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { GlobalStateProvider } from "context/globalState";
 
 const queryClient = new QueryClient();
 
@@ -13,9 +12,7 @@ ReactDOM.render(
   <React.StrictMode>
     <ChakraProvider>
       <QueryClientProvider client={queryClient}>
-        <GlobalStateProvider>
-          <App />
-        </GlobalStateProvider>
+        <App />
       </QueryClientProvider>
     </ChakraProvider>
   </React.StrictMode>,

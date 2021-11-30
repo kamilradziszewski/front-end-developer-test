@@ -1,36 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import { Box, Button, Heading, Stack } from "@chakra-ui/react";
-import { useGlobalState } from "context/globalState";
 import { formatPrice } from "utils/formatPrice";
 import BasketItem from "./BasketItem";
+import { Context } from "stores/store";
 
 function Basket() {
-  const [state, setState] = useGlobalState();
-  const [totalPrice, setTotalPrice] = useState<number>(0);
-
-  function calculateTotalPrice() {
-    return Object.keys(state.basket).reduce(
-      (acc, key) => acc + state.prices[key] * state.basket[key],
-      0
-    );
-  }
-
-  function removeAllFromBasket() {
-    const emptyBasket: { [key: string]: number } = {};
-    Object.keys(state.basket).forEach((key: string) => (emptyBasket[key] = 0));
-
-    const emptyTUL: { [key: string]: { current: number; max: number } } = {};
-    Object.keys(state.TUL).forEach(
-      (key: string) => (emptyTUL[key] = { ...state.TUL[key], current: 0 })
-    );
-
-    setState({ ...state, basket: emptyBasket, TUL: emptyTUL });
-  }
-
-  React.useEffect(() => {
-    if (state.basket) setTotalPrice(calculateTotalPrice());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.basket]);
+  const { store, dispatch } = useContext(Context);
 
   return (
     <Box
@@ -47,18 +22,22 @@ function Basket() {
         Your basket
       </Heading>
       <Heading as="h3" size="md" mb={8}>
-        Total: {formatPrice(totalPrice, "GBP")}
+        {store.totalPrice !== undefined &&
+          store.currency !== "" &&
+          `Total: ${formatPrice(store.totalPrice, store.currency)}`}
       </Heading>
       <Stack>
-        {state.basket &&
-          Object.keys(state.basket).map((key) => {
-            const amount = state.basket[key];
-            return amount > 0 ? (
-              <BasketItem key={key} name={key} amount={amount} />
-            ) : null;
-          })}
+        {store.basket.map((item: any) => (
+          <BasketItem
+            key={item.name}
+            name={item.name}
+            amount={item.amount}
+            price={item.price}
+            nutrients={item.nutrients}
+          />
+        ))}
       </Stack>
-      {!!totalPrice && (
+      {store.basket.length > 0 && (
         <Button
           display="block"
           mx="auto"
@@ -68,7 +47,7 @@ function Basket() {
           _hover={{
             boxShadow: "rgb(0 0 0 / 20%) 2px 2px 6px 1px",
           }}
-          onClick={removeAllFromBasket}
+          onClick={() => dispatch({ type: "REMOVE_ALL_ITEMS" })}
         >
           Remove all
         </Button>

@@ -1,20 +1,20 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box, Button, Text } from "@chakra-ui/react";
 import { formatPrice } from "utils/formatPrice";
-import { useGlobalState } from "context/globalState";
+import { Context } from "stores/store";
 
-function BasketItem({ name, amount }: { name: string; amount: number }) {
-  const [state, setState] = useGlobalState();
-
-  function removeFromBasket(item: string) {
-    const newTUL = state.TUL;
-    state.products
-      .find((product: any) => product.name === item)
-      .nutrients.forEach((nutrient: any) => {
-        newTUL[nutrient.id].current = 0;
-      });
-    setState({ ...state, basket: { ...state.basket, [item]: 0 }, TUL: newTUL });
-  }
+function BasketItem({
+  name,
+  amount,
+  price,
+  nutrients,
+}: {
+  name: string;
+  amount: number;
+  price: number;
+  nutrients: any[];
+}) {
+  const { store, dispatch } = useContext(Context);
 
   return (
     <Box bg="#e7e8f3" boxShadow="md" rounded="md" overflow="hidden" p={3}>
@@ -27,17 +27,21 @@ function BasketItem({ name, amount }: { name: string; amount: number }) {
       <Text fontSize="sm" mb={2}>
         Subtotal:{" "}
         <strong>
-          {formatPrice(amount * state.prices[name], state.currency)}
+          {store.currency && formatPrice(amount * price, store.currency)}
         </strong>
       </Text>
       <Button
-        // bg="#ffd326"
         colorScheme="red"
         size="sm"
         _hover={{
           boxShadow: "rgb(0 0 0 / 20%) 2px 2px 6px 1px",
         }}
-        onClick={() => removeFromBasket(name)}
+        onClick={() =>
+          dispatch({
+            type: "REMOVE_ITEM",
+            payload: { name, price, amount, nutrients },
+          })
+        }
       >
         Remove
       </Button>

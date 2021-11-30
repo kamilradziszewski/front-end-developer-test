@@ -1,9 +1,15 @@
-import React from "react";
-
+import React, { useReducer } from "react";
+import { Context, initialState, reducer } from "./stores/store";
 import Home from "pages/Home";
 
 function App() {
-  return <Home />;
+  const [store, dispatch] = useReducer(reducer, initialState);
+
+  return (
+    <Context.Provider value={{ store, dispatch }}>
+      <Home />
+    </Context.Provider>
+  );
 }
 
 export default App;

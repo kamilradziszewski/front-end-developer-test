@@ -1,8 +1,9 @@
 import React from "react";
-import ProductCard, { productType } from "./ProductCard";
+import ProductCard from "./ProductCard";
 import { Container, Heading, SimpleGrid } from "@chakra-ui/react";
+import { ProductType } from "stores/store";
 
-function ProductList({ products }: { products: productType[] }) {
+function ProductList({ products }: { products: ProductType[] }) {
   return (
     <Container maxW="container.xl" bg="#fef6dc" pt={8} pb={12} pr="21rem">
       <Heading as="h2" size="lg" mb={8}>

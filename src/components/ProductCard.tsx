@@ -1,53 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box, Button, Text } from "@chakra-ui/react";
 import { formatPrice } from "utils/formatPrice";
-import { useGlobalState } from "context/globalState";
+import { Context, ProductType } from "stores/store";
 
-export type productType = {
-  name: string;
-  price: number;
-  nutrients: [
-    {
-      id: string;
-      amount: number;
-    }
-  ];
-};
-
-function ProductCard({ name, price, nutrients }: productType) {
-  const [state, setState] = useGlobalState();
-
-  function canItemBeAddedToBasket() {
-    return !nutrients
-      .map((nutrient) => {
-        return (
-          state.TUL[nutrient.id].current + nutrient.amount <=
-          state.TUL[nutrient.id].max
-        );
-      })
-      .some((item) => item === false);
-  }
-
-  function addToBasket() {
-    if (!canItemBeAddedToBasket()) {
-      alert("TUL exceeded, you can’t add this product to the basket");
-      return;
-    }
-
-    const { basket } = state;
-
-    const newTUL = { ...state.TUL };
-    nutrients.forEach((nutrient) => {
-      const { id, amount } = nutrient;
-      newTUL[id].current += amount;
-    });
-
-    setState({
-      ...state,
-      basket: { ...basket, [name]: basket[name] + 1 },
-      TUL: newTUL,
-    });
-  }
+function ProductCard({ name, price, nutrients }: ProductType) {
+  const { store, dispatch } = useContext(Context);
 
   return (
     <Box
@@ -63,7 +20,7 @@ function ProductCard({ name, price, nutrients }: productType) {
         {name}
       </Text>
       <Text fontSize="sm" mb={4}>
-        {state.currency && formatPrice(price, state.currency)}
+        {store.currency && formatPrice(price, store.currency)}
       </Text>
       <Button
         bg="#ffd326"
@@ -72,7 +29,12 @@ function ProductCard({ name, price, nutrients }: productType) {
           bg: "#ffd326",
           boxShadow: "rgb(0 0 0 / 20%) 2px 2px 6px 1px",
         }}
-        onClick={addToBasket}
+        onClick={() =>
+          dispatch({
+            type: "ADD_ITEM",
+            payload: { name, price, nutrients },
+          })
+        }
       >
         Add to basket
       </Button>
